@@ -4,12 +4,12 @@ let cors = require('cors');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
 
-const JWT_SECRET = 'c7b756n634456nv5n934nn'
+const JWT_SECRET = ''
 
 let User = require('./User');
 
-const password = 'CbL8VdfGTCQuwhUC'
-const database = 'auth'
+const password = ''
+const database = ''
 const server = `mongodb+srv://dbTech:${password}@cluster0.94tuo.mongodb.net/${database}?retryWrites=true&w=majority`
 const config = { useNewUrlParser: true, useUnifiedTopology: true }
 
