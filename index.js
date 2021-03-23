@@ -33,35 +33,42 @@ app.get('/test', (req, res) => {
 
 app.post('/register', async (req, res) => {
 
-    const username = req.body.username;
-    const prePassword = req.body.password;
+    const nome = req.body.nome;
+    const email = req.body.email;
+    const presenha = req.body.senha;
 
-    const userExists = await User.findOne({ username }).lean()
+    const emailExists = await User.findOne({ email }).lean()
 
-    if(username.length == 0) {
-        return res.json({ status: 'error', error: 'Your username cannot be null' })
+    if(nome.length == 0) {
+        return res.json({ status: 'error', error: 'Your nome cannot be null' })
     }
 
-    if(userExists) {
-        return res.json({ status: 'error', error: 'This user is already been registered' })
+    if(email.length == 0) {
+        return res.json({ status: 'error', error: 'Your email cannot be null' })
+    }
+
+    if(emailExists) {
+        return res.json({ status: 'error', error: 'This email is already been registered' })
     } 
 
-    if(prePassword.length < 8) {
-        return res.json({ status: 'error', error: 'Your password must contain at least 8 characters' })
+    if(presenha.length < 8) {
+        return res.json({ status: 'error', error: 'Your senha must contain at least 8 characters' })
     }
 
-    const password = await bcrypt.hash(prePassword, 10)
+    const senha = await bcrypt.hash(presenha, 10)
 
     const user = new User({
-        username: username,
-        password: password,
+        email: email,
+        username: nome,
+        senha: senha,
     })
     await user.save()
 
     const token = jwt.sign(
         {
             id: user._id,
-            username: user.username
+            email: user.email,
+            nome: user.username
         },
         JWT_SECRET
     )
@@ -73,29 +80,38 @@ app.post('/register', async (req, res) => {
 // And handle these errors typing what's required :)
 
 app.post('/login', async (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+    const email = req.body.email;
+    const senha = req.body.senha;
 
-    const user = await User.findOne({ username }).lean()
+    const user = await User.findOne({ email }).lean()
 
-    if (!user) {
-        return res.json({ status: 'error', error: 'This username does not exists'})
+    if(email.length == 0) {
+        return res.json({ status: 'error', error: 'Your email cannot be null' })
     }
 
-    if (await bcrypt.compare(password, user.password)) {
-        // the username, password combination is successful
+    if (!user) {
+        return res.json({ status: 'error', error: 'This email does not exists'})
+    }
+
+    if(senha.length == 0) {
+        return res.json({ status: 'error', error: 'Your pasword cannot be null' })
+    }
+
+    if (await bcrypt.compare(senha, user.senha)) {
+        // the email, senha combination is successful
 
         const token = jwt.sign(
             {
                 id: user._id,
-                username: user.username
+                nome: user.username,
+                email: user.email,
             },
             JWT_SECRET
         )
 
         return res.json({ status: 'ok', data: token })
     } else {
-        return res.json({ status: 'error', error: 'Invalid password' })
+        return res.json({ status: 'error', error: 'Invalid senha' })
     }
 
 })

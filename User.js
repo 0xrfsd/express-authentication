@@ -1,12 +1,14 @@
 let mongoose = require('mongoose');
 
 // Add Validators !!!
-let userSchema = new mongoose.Schema({ 
+let userSchema = new mongoose.Schema({
+    email: {
+        type: String,
+    },
     username: {
         type: String,
-        unique: true
     },
-    password: {
+    senha: {
         type: String,
     },
 })
